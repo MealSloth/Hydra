@@ -66,3 +66,13 @@ LOGGING = {
         },
     }
 }
+
+# Google Cloud Storage
+
+GCS_CLIENT_ID = 'mealsloth-dryad-bu01'
+
+GOOGLE_CLOUD_STORAGE_BUCKET = '/' + GCS_CLIENT_ID
+GOOGLE_CLOUD_STORAGE_URL = 'http://storage.googleapis.com/'
+GOOGLE_CLOUD_STORAGE_DEFAULT_CACHE_CONTROL = 'public, max-age: 7200'
+
+DEFAULT_FILE_STORAGE = 'google.storage.google_cloud.GoogleCloudStorage'
