@@ -34,10 +34,7 @@ def blob_image_upload(request):
             blob.save()
 
             response = {'result': 1000}
-            if form.origin == 'Valkyrie':
-                return HttpResponseRedirect('admin.mealsloth.com')
-            else:
-                return HttpResponse(dumps(response), content_type='application/json')
+            return HttpResponse(dumps(response), content_type='application/json')
         else:
             response = {'result': 2020, 'message': 'Invalid form'}
             return HttpResponse(dumps(response), content_type='application/json')
