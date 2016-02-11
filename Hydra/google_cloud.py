@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import Storage
 from google.appengine.api.blobstore import create_gs_key
-import cloudstorage as gcs
+import lib.cloudstorage as gcs
 
 __author__ = 'ckopanos@redmob.gr'
 
