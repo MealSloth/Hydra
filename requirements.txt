@@ -1,0 +1,3 @@
+boto
+django
+gcs_oauth2_boto_plugin
