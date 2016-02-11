@@ -38,6 +38,7 @@ WSGI_APPLICATION = 'Hydra.wsgi.application'
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sites',
+    'lib.cloudstorage',
     'Hydra',
 )
 
