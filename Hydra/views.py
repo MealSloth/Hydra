@@ -1,4 +1,4 @@
-from form.photo.form_blob_photo_upload import BlobPhotoUploadForm
+from form.photo.form_blob_photo_upload import BlobImageUploadForm
 from lib.google.storage.google_cloud import GoogleCloudStorage
 from django.http import HttpResponse, HttpResponseRedirect
 from _include.Chimera.Chimera.models import Album, Blob
@@ -13,10 +13,10 @@ def home(request):
     return HttpResponse(dumps(response), content_type='application/json')
 
 
-def blob_photo_upload(request):
+def blob_image_upload(request):
     if request.method == 'POST':
         print(request)
-        form = BlobPhotoUploadForm(request.POST, request.FILES)
+        form = BlobImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
             gcs = GoogleCloudStorage()
 
@@ -25,6 +25,7 @@ def blob_photo_upload(request):
 
             blob = Blob(
                 album_id=album.id,
+                content_type=form.content_type,
             )
 
             blob.save()
