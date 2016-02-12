@@ -25,7 +25,7 @@ def blob_image_upload(request):
 
             blob = Blob(
                 album_id=album.id,
-                content_type=form.content_type,
+                content_type='image/jpeg',
             )
 
             blob.save()
