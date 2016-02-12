@@ -1,8 +1,8 @@
-from form.image.form_blob_image_upload import BlobImageUploadForm
-from django.http import HttpResponse, HttpResponseRedirect
 from _include.Chimera.Chimera.models import Album, Blob
+from django.core.files.base import ContentFile
 from google_cloud import GoogleCloudStorage
-from json import dumps
+from django.http import HttpResponse
+from json import dumps, loads
 
 
 def home(request):
@@ -15,29 +15,26 @@ def home(request):
 
 def blob_image_upload(request):
     if request.method == 'POST':
-        print(request)
-        form = BlobImageUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            gcs = GoogleCloudStorage()
+        if not request.body:
+            return
 
-            album = Album()
-            album.save()
+        gcs = GoogleCloudStorage()
 
-            blob = Blob(
-                album_id=album.id,
-                content_type='image/jpeg',
-            )
+        album = Album()
+        album.save()
 
-            blob.save()
-            blob.gcs_id = gcs.save('user/profile-photo/' + str(blob.id), request.FILES['file'])
-            print(blob.gcs_id)
-            blob.save()
+        blob = Blob(
+            album_id=album.id,
+            content_type='image/jpeg'
+            # content_type=request.POST['content_type'],
+        )
 
-            response = {'result': 1000}
-            return HttpResponse(dumps(response), content_type='application/json')
-        else:
-            response = {'result': 2020, 'message': 'Invalid form'}
-            return HttpResponse(dumps(response), content_type='application/json')
+        blob.save()
+        blob.gcs_id = gcs.save('user/profile-photo/' + str(blob.id), ContentFile(request.body[5:]))
+        blob.save()
+
+        response = {'result': 1000}
+        return HttpResponse(dumps(response), content_type='application/json')
     else:
         response = {'result': 9001, 'message': 'Only accessible by POST'}
         return HttpResponse(dumps(response), content_type='application/json')
