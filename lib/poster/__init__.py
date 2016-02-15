@@ -29,4 +29,4 @@ New in version 0.6."""
 import streaminghttp
 import encode
 
-version = (0, 8, 1) # Thanks JP!
+version = (0, 8, 1)  # Thanks JP!
