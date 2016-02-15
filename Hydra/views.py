@@ -9,11 +9,11 @@ import imghdr
 
 
 def home(request):
-    response = {
+    response = dumps({
         'message': 'This is the MealSloth Blob API. For more information about MealSloth, visit the URL.',
         'url': 'mealsloth.com',
-    }
-    return HttpResponse(dumps(response), content_type='application/json')
+    })
+    return HttpResponse(response, content_type='application/json')
 
 
 def get_bucket_url(request):
@@ -42,11 +42,11 @@ def blob_image_upload(request):
         blob.gcs_id = gcs.save('user/profile-photo/' + str(blob.id), image_file)
         blob.save()
 
-        response = {'result': 1000}
-        return HttpResponse(dumps(response), content_type='application/json')
+        response = dumps({'result': 1000})
+        return HttpResponse(response, content_type='application/json')
     else:
-        response = {'result': 9001, 'message': 'Only accessible by POST'}
-        return HttpResponse(dumps(response), content_type='application/json')
+        response = dumps({'result': 9001, 'message': 'Only accessible by POST'})
+        return HttpResponse(response, content_type='application/json')
 
 
 def blog_image_upload(request):
@@ -81,11 +81,11 @@ def blog_image_upload(request):
         blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
         blob.save()
 
-        response = {'result': 1000}
-        return HttpResponse(dumps(response), content_type='application/json')
+        response = dumps({'result': 1000})
+        return HttpResponse(response, content_type='application/json')
     else:
-        response = {'result': 9001, 'message': 'Only accessible by POST'}
-        return HttpResponse(dumps(response), content_type='application/json')
+        response = dumps({'result': 9001, 'message': 'Only accessible by POST'})
+        return HttpResponse(response, content_type='application/json')
 
 
 def blob_image_view(request):
