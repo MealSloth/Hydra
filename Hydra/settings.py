@@ -1,4 +1,4 @@
-import _include.Chimera.Chimera.databases as chimera
+from _include.Chimera.Chimera.databases import databases
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -9,7 +9,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = chimera.databases()
+DATABASES = databases()
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'blob.mealsloth.com']
 

@@ -1,3 +1,4 @@
+from settings import GCS_CLIENT_ID, GOOGLE_CLOUD_STORAGE_URL
 from _include.Chimera.Chimera.models import Album, Blob
 from django.core.files.base import ContentFile
 from google_cloud import GoogleCloudStorage
@@ -13,6 +14,11 @@ def home(request):
         'url': 'mealsloth.com',
     }
     return HttpResponse(dumps(response), content_type='application/json')
+
+
+def get_bucket_url(request):
+    response = dumps({'url': GOOGLE_CLOUD_STORAGE_URL + GCS_CLIENT_ID + '/', 'result': 1000})
+    return HttpResponse(response, content_type='application/json')
 
 
 def blob_image_upload(request):
