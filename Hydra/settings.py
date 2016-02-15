@@ -1,4 +1,4 @@
-from _include.Chimera.Chimera.databases import databases
+import _include.Chimera.Chimera.databases as chimera
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -9,7 +9,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = databases()
+DATABASES = chimera.databases()
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'blob.mealsloth.com']
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'lib.cloudstorage',
     'Hydra',
+    '_include.Chimera.Chimera',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

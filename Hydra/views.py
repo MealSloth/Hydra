@@ -59,8 +59,8 @@ def blog_image_upload(request):
         try:
             album.save()
         except StandardError, error:
-            response = loads({'result': 2041, 'message': 'Cannot save Album to DB', 'error': error})
-            return HttpResponse(response)
+            response = dumps({'result': 2041, 'message': 'Cannot save Album to DB', 'error': error})
+            return HttpResponse(response, content_type='application/json')
 
         blob = Blob(
             album_id=album.id,
@@ -70,8 +70,8 @@ def blog_image_upload(request):
         try:
             blob.save()
         except StandardError, error:
-            response = loads({'result': 2042, 'message': 'Cannot save Blob to DB', 'error': error})
-            return HttpResponse(response)
+            response = dumps({'result': 2042, 'message': 'Cannot save Blob to DB', 'error': error})
+            return HttpResponse(response, content_type='application/json')
         blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
         blob.save()
 
