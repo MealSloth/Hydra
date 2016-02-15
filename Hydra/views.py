@@ -54,10 +54,14 @@ def blog_image_upload(request):
 
         blob = Blob(
             album_id=body['album_id'],
-            content_type='image/%s' % imghdr.what(image_file)
+            content_type='image/' + imghdr.what(image_file)
         )
 
-        blob.save()
+        try:
+            blob.save()
+        except StandardError, error:
+            response = loads({'result': 2041, 'message': 'Cannot save to DB', 'error': error})
+            return HttpResponse(response)
         blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
         blob.save()
 
