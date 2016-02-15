@@ -4,6 +4,7 @@ from google_cloud import GoogleCloudStorage
 from django.http import HttpResponse
 from json import dumps, loads
 from base64 import b64decode
+import imghdr
 
 
 def home(request):
@@ -33,6 +34,31 @@ def blob_image_upload(request):
 
         blob.save()
         blob.gcs_id = gcs.save('user/profile-photo/' + str(blob.id), image_file)
+        blob.save()
+
+        response = {'result': 1000}
+        return HttpResponse(dumps(response), content_type='application/json')
+    else:
+        response = {'result': 9001, 'message': 'Only accessible by POST'}
+        return HttpResponse(dumps(response), content_type='application/json')
+
+
+def blog_image_upload(request):
+    if request.method == 'POST':
+        body = loads(request.body)
+        decoded_image = b64decode(body['file'])
+
+        image_file = ContentFile(decoded_image)
+
+        gcs = GoogleCloudStorage()
+
+        blob = Blob(
+            album_id=body['album_id'],
+            content_type='image/%s' % imghdr.what(image_file)
+        )
+
+        blob.save()
+        blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
         blob.save()
 
         response = {'result': 1000}
