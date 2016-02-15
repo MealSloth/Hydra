@@ -52,15 +52,25 @@ def blog_image_upload(request):
 
         gcs = GoogleCloudStorage()
 
+        album = Album(
+            id=body['album_id']
+        )
+
+        try:
+            album.save()
+        except StandardError, error:
+            response = loads({'result': 2041, 'message': 'Cannot save Album to DB', 'error': error})
+            return HttpResponse(response)
+
         blob = Blob(
-            album_id=body['album_id'],
+            album_id=album.id,
             content_type='image/' + imghdr.what(image_file)
         )
 
         try:
             blob.save()
         except StandardError, error:
-            response = loads({'result': 2041, 'message': 'Cannot save to DB', 'error': error})
+            response = loads({'result': 2042, 'message': 'Cannot save Blob to DB', 'error': error})
             return HttpResponse(response)
         blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
         blob.save()
