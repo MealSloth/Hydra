@@ -49,6 +49,32 @@ def blob_image_upload(request):
         return HttpResponse(response, content_type='application/json')
 
 
+def blob_image_upload_for_album_id(request):
+    if request.method == 'POST':
+        body = loads(request.body)
+        decoded_image = b64decode(body['file'])
+        album_id = body['album_id']
+
+        image_file = ContentFile(decoded_image)
+
+        gcs = GoogleCloudStorage()
+
+        blob = Blob(
+            album_id=album_id,
+            content_type='image/jpeg'
+        )
+
+        blob.save()
+        blob.gcs_id = gcs.save('' + str(blob.id), image_file)
+        blob.save()
+
+        response = dumps({'result': 1000})
+        return HttpResponse(response, content_type='application/json')
+    else:
+        response = dumps({'result': 9001, 'message': 'Only accessible by POST'})
+        return HttpResponse(response, content_type='application/json')
+
+
 def blog_image_upload(request):
     if request.method == 'POST':
         body = loads(request.body)
