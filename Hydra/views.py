@@ -16,12 +16,12 @@ def home(request):
     return HttpResponse(response, content_type='application/json')
 
 
-def get_bucket_url(request):
+def bucket_url(request):
     response = dumps({'url': GOOGLE_CLOUD_STORAGE_URL + GCS_CLIENT_ID + '/', 'result': 1000})
     return HttpResponse(response, content_type='application/json')
 
 
-def blob_image_upload(request):
+def blob_upload(request):
     if request.method == 'POST':
         body = loads(request.body)
         decoded_image = b64decode(body['file'])
@@ -30,8 +30,16 @@ def blob_image_upload(request):
 
         gcs = GoogleCloudStorage()
 
-        album = Album()
-        album.save()
+        if not body.get('album_id'):
+            album = Album()
+            album.save()
+        else:
+            album = Album.objects.filter(pk=body.get('album_id'))
+            if album.count() > 0:
+                album = album[0]
+            else:
+                response = dumps({'result': 9002, 'message': 'No database entry found'})
+                return HttpResponse(response)
 
         blob = Blob(
             album_id=album.id,
@@ -40,32 +48,6 @@ def blob_image_upload(request):
 
         blob.save()
         blob.gcs_id = gcs.save('user/profile-photo/' + str(blob.id), image_file)
-        blob.save()
-
-        response = dumps({'result': 1000})
-        return HttpResponse(response, content_type='application/json')
-    else:
-        response = dumps({'result': 9001, 'message': 'Only accessible by POST'})
-        return HttpResponse(response, content_type='application/json')
-
-
-def blob_image_upload_for_album_id(request):
-    if request.method == 'POST':
-        body = loads(request.body)
-        decoded_image = b64decode(body['file'])
-        album_id = body['album_id']
-
-        image_file = ContentFile(decoded_image)
-
-        gcs = GoogleCloudStorage()
-
-        blob = Blob(
-            album_id=album_id,
-            content_type='image/jpeg'
-        )
-
-        blob.save()
-        blob.gcs_id = gcs.save('' + str(blob.id), image_file)
         blob.save()
 
         response = dumps({'result': 1000})
@@ -104,8 +86,18 @@ def blog_image_upload(request):
         except StandardError, error:
             response = dumps({'result': 2042, 'message': 'Cannot save Blob to DB', 'error': error})
             return HttpResponse(response, content_type='application/json')
-        blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
-        blob.save()
+
+        try:
+            blob.gcs_id = gcs.save('siren/blog/' + str(blob.id), image_file)
+        except IOError, error:
+            response = dumps({'result': 2043, 'message': 'Cannot save Blob to GCS', 'error': error})
+            return HttpResponse(response, content_type='application/json')
+
+        try:
+            blob.save()
+        except StandardError, error:
+            response = dumps({'result': 2042, 'message': 'Cannot save Blob to DB', 'error': error})
+            return HttpResponse(response, content_type='application/json')
 
         response = dumps({'result': 1000})
         return HttpResponse(response, content_type='application/json')
