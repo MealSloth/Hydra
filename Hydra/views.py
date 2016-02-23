@@ -27,7 +27,14 @@ def album_delete(request):
             return HttpResponse(response, content_type='application/json')
 
         album_id = body.get('album_id')
+        album = Album.objects.filter(id=album_id)
         blob_list = Blob.objects.filter(album_id=album_id)
+
+        if album.count() > 0:
+            album = album[0]
+        else:
+            response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
+            return HttpResponse(response, content_type='application/json')
 
         if blob_list.count() > 0:
             pass
@@ -50,6 +57,12 @@ def album_delete(request):
             except StandardError:
                 response = Result.get_result_dump(Result.DATABASE_CANNOT_DELETE_BLOB)
                 return HttpResponse(response, content_type='application/json')
+
+        try:
+            album.delete()
+        except StandardError:
+            response = Result.get_result_dump(Result.DATABASE_CANNOT_DELETE_ALBUM)
+            return HttpResponse(response, content_type='application/json')
 
         response = Result.get_result_dump(Result.SUCCESS)
         return HttpResponse(response, content_type='application/json')
