@@ -80,6 +80,44 @@ def blob_upload(request):
         return HttpResponse(response, content_type='application/json')
 
 
+def blob_delete(request):
+    if request.method == 'POST':
+        body = loads(request.body)
+
+        if not body.get('blob_id'):
+            response = Result.get_result_dump(Result.INVALID_PARAMETER)
+            return HttpResponse(response, content_type='application/json')
+
+        blob_id = body.get('blob_id')
+        blob = Blob.objects.filter(pk=blob_id)
+
+        if blob.count() > 0:
+            blob = blob[0]
+        else:
+            response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
+            return HttpResponse(response, content_type='application/json')
+
+        gcs = GoogleCloudStorage()
+
+        try:
+            gcs.delete(blob.gcs_id)
+        except IOError:
+            response = Result.get_result_dump(Result.STORAGE_CANNOT_DELETE_BLOB)
+            return HttpResponse(response, content_type='application/json')
+
+        try:
+            blob.delete()
+        except StandardError:
+            response = Result.get_result_dump(Result.DATABASE_CANNOT_DELETE_BLOB)
+            return HttpResponse(response, content_type='application/json')
+
+        response = Result.get_result_dump(Result.SUCCESS)
+        return HttpResponse(response, content_type='application/json')
+    else:
+        response = Result.get_result_dump(Result.POST_ONLY)
+        return HttpResponse(response, content_type='application/json')
+
+
 def blog_image_upload(request):
     if request.method == 'POST':
         body = loads(request.body)
