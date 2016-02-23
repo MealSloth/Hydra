@@ -89,7 +89,8 @@ def blog_image_upload(request):
         gcs = GoogleCloudStorage()
 
         album = Album(
-            id=body['album_id']
+            id=body['album_id'],
+            time=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f"),
         )
 
         try:
