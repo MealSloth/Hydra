@@ -26,9 +26,7 @@ def album_delete(request):
             response = Result.get_result_dump(Result.INVALID_PARAMETER)
             return HttpResponse(response, content_type='application/json')
 
-        album_id = body.get('album_id')
-        album = Album.objects.filter(id=album_id)
-        blob_list = Blob.objects.filter(album_id=album_id)
+        album = Album.objects.filter(id=body.get('album_id'))
 
         if album.count() > 0:
             album = album[0]
@@ -36,11 +34,7 @@ def album_delete(request):
             response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
             return HttpResponse(response, content_type='application/json')
 
-        if blob_list.count() > 0:
-            pass
-        else:
-            response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
-            return HttpResponse(response, content_type='application/json')
+        blob_list = Blob.objects.filter(album_id=album.id)
 
         gcs = GoogleCloudStorage()
 
