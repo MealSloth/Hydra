@@ -1,4 +1,16 @@
 from _include.Chimera.Chimera.databases import databases
+import sys
+import os
+
+
+git_submodules = [
+    '_include/Chimera/',
+]
+
+for directory in git_submodules:
+    path = os.path.join(directory)
+    if path not in sys.path:
+        sys.path.append(path)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
