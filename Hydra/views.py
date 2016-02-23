@@ -27,9 +27,15 @@ def bucket_url(request):
 def blob_upload(request):
     if request.method == 'POST':
         body = loads(request.body)
-        decoded_image = b64decode(body['file'])
 
+        if not body.get('file'):
+            response = Result.get_result_dump(Result.INVALID_PARAMETER)
+            return HttpResponse(response, content_type='application/json')
+
+        decoded_image = b64decode(body['file'])
         image_file = ContentFile(decoded_image)
+
+        url_suffix = body.get('url_suffix')
 
         gcs = GoogleCloudStorage()
 
@@ -46,12 +52,24 @@ def blob_upload(request):
 
         blob = Blob(
             album_id=album.id,
-            content_type='image/jpeg'
+            content_type='image/' + imghdr.what(image_file)
         )
 
-        blob.save()
-        blob.gcs_id = gcs.save('user/profile-photo/' + str(blob.id), image_file)
-        blob.save()
+        try:
+            blob.save()
+        except StandardError:
+            response = Result.get_result_dump(Result.DATABASE_CANNOT_SAVE_BLOB)
+            return HttpResponse(response, content_type='application/json')
+        try:
+            blob.gcs_id = gcs.save(url_suffix + str(blob.id), image_file)
+        except StandardError:
+            response = Result.get_result_dump(Result.STORAGE_CANNOT_SAVE_BLOB)
+            return HttpResponse(response, content_type='application/json')
+        try:
+            blob.save()
+        except StandardError:
+            response = Result.get_result_dump(Result.DATABASE_CANNOT_SAVE_BLOB)
+            return HttpResponse(response, content_type='application/json')
 
         response = Result.get_result_dump(Result.SUCCESS)
         return HttpResponse(response, content_type='application/json')
