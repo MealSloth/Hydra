@@ -18,6 +18,46 @@ def home(request):
     return HttpResponse(response, content_type='application/json')
 
 
+def album_delete(request):
+    if request.method == 'POST':
+        body = loads(request.body)
+
+        if not body.get('album_id'):
+            response = Result.get_result_dump(Result.INVALID_PARAMETER)
+            return HttpResponse(response, content_type='application/json')
+
+        album_id = body.get('album_id')
+        blob_list = Blob.objects.filter(album_id=album_id)
+
+        if blob_list.count() > 0:
+            pass
+        else:
+            response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
+            return HttpResponse(response, content_type='application/json')
+
+        gcs = GoogleCloudStorage()
+
+        for blob in blob_list:
+            try:
+                gcs.delete(blob.gcs_id)
+            except IOError:
+                response = Result.get_result_dump(Result.STORAGE_CANNOT_DELETE_BLOB)
+                return HttpResponse(response, content_type='application/json')
+
+        for blob in blob_list:
+            try:
+                blob.delete()
+            except StandardError:
+                response = Result.get_result_dump(Result.DATABASE_CANNOT_DELETE_BLOB)
+                return HttpResponse(response, content_type='application/json')
+
+        response = Result.get_result_dump(Result.SUCCESS)
+        return HttpResponse(response, content_type='application/json')
+    else:
+        response = Result.get_result_dump(Result.POST_ONLY)
+        return HttpResponse(response, content_type='application/json')
+
+
 def bucket_url(request):
     response = {'url': GOOGLE_CLOUD_STORAGE_URL + GCS_CLIENT_ID + '/'}
     Result.append_result(response, Result.SUCCESS)
