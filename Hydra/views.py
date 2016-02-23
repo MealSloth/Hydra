@@ -4,6 +4,7 @@ from _include.Chimera.Chimera.results import Result
 from django.core.files.base import ContentFile
 from google_cloud import GoogleCloudStorage
 from django.http import HttpResponse
+from datetime import datetime
 from json import dumps, loads
 from base64 import b64decode
 import imghdr
@@ -40,7 +41,7 @@ def blob_upload(request):
         gcs = GoogleCloudStorage()
 
         if not body.get('album_id'):
-            album = Album()
+            album = Album(time=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f"))
             album.save()
         else:
             album = Album.objects.filter(pk=body.get('album_id'))
