@@ -53,7 +53,8 @@ def blob_upload(request):
 
         blob = Blob(
             album_id=album.id,
-            content_type='image/' + imghdr.what(image_file)
+            content_type='image/' + imghdr.what(image_file),
+            time=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f"),
         )
 
         try:
@@ -101,7 +102,8 @@ def blog_image_upload(request):
 
         blob = Blob(
             album_id=album.id,
-            content_type='image/' + imghdr.what(image_file)
+            content_type='image/' + imghdr.what(image_file),
+            time=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f"),
         )
 
         try:
