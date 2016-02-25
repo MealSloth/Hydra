@@ -145,17 +145,18 @@ def blob_delete(request):
             return HttpResponse(response, content_type='application/json')
 
         gcs = GoogleCloudStorage()
-
-        try:
-            gcs.delete(blob.gcs_id)
-        except IOError:
-            response = Result.get_result_dump(Result.STORAGE_CANNOT_DELETE_BLOB)
-            return HttpResponse(response, content_type='application/json')
+        gcs_id = blob.gcs_id
 
         try:
             blob.delete()
         except StandardError:
             response = Result.get_result_dump(Result.DATABASE_CANNOT_DELETE_BLOB)
+            return HttpResponse(response, content_type='application/json')
+
+        try:
+            gcs.delete(gcs_id)
+        except IOError:
+            response = Result.get_result_dump(Result.STORAGE_CANNOT_DELETE_BLOB)
             return HttpResponse(response, content_type='application/json')
 
         response = Result.get_result_dump(Result.SUCCESS)
