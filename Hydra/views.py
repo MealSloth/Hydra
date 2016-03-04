@@ -38,6 +38,9 @@ def album_create(request):
         Result.append_result(response, Result.SUCCESS)
         response = dumps(response)
         return HttpResponse(response, content_type='application/json')
+    else:
+        response = Result.get_result_dump(Result.POST_ONLY)
+        return HttpResponse(response, content_type='application/json')
 
 
 def album_delete(request):
