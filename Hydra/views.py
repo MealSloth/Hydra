@@ -1,4 +1,5 @@
-from settings import GCS_CLIENT_ID, GOOGLE_CLOUD_STORAGE_URL
+from settings import GCS_CLIENT_ID, GOOGLE_CLOUD_STORAGE_URL, TIME_FORMAT
+from _include.Chimera.Chimera.utils import model_to_dict
 from _include.Chimera.Chimera.models import Album, Blob
 from _include.Chimera.Chimera.results import Result
 from django.core.files.base import ContentFile
@@ -16,6 +17,26 @@ def home(request):
         'url': 'mealsloth.com',
     })
     return HttpResponse(response, content_type='application/json')
+
+
+def album_create(request):
+    if request and request.method == 'POST':
+        if not request or not request.method == 'POST':
+            response = Result.get_result_dump(Result.INVALID_PARAMETER)
+            return HttpResponse(response, content_type='application/json')
+
+        album = Album(time=datetime.utcnow().strftime(TIME_FORMAT))
+
+        try:
+            album.save()
+        except StandardError:
+            response = Result.get_result_dump(Result.DATABASE_CANNOT_SAVE_ALBUM)
+            return HttpResponse(response, content_type='application/json')
+
+        response = {'album': model_to_dict(album)}
+        Result.append_result(response, Result.SUCCESS)
+        response = dumps(response)
+        return HttpResponse(response, content_type='application/json')
 
 
 def album_delete(request):
