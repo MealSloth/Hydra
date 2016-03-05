@@ -126,7 +126,7 @@ def blob_upload(request):
         filetype = imghdr.what(image_file)
 
         if filetype not in ('jpeg', 'png', 'gif'):
-            response = Result.get_result_dump(Result.INVALID_FILETYPE)
+            response = Result.get_result_dump(Result.FILETYPE_INVALID)
             return HttpResponse(response, content_type='application/json')
 
         blob = Blob(
