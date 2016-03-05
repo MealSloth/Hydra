@@ -112,6 +112,12 @@ def blob_upload(request):
 
         gcs = GoogleCloudStorage()
 
+        filetype = imghdr.what(image_file)
+
+        if filetype not in ('jpeg', 'png', 'gif'):
+            response = Result.get_result_dump(Result.FILETYPE_INVALID)
+            return HttpResponse(response, content_type='application/json')
+
         if not body.get('album_id'):
             album = Album(time=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f"))
             album.save()
@@ -122,12 +128,6 @@ def blob_upload(request):
             else:
                 response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
                 return HttpResponse(response, content_type='application/json')
-
-        filetype = imghdr.what(image_file)
-
-        if filetype not in ('jpeg', 'png', 'gif'):
-            response = Result.get_result_dump(Result.FILETYPE_INVALID)
-            return HttpResponse(response, content_type='application/json')
 
         blob = Blob(
             album_id=album.id,
