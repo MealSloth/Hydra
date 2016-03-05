@@ -90,3 +90,8 @@ GOOGLE_CLOUD_STORAGE_URL = 'http://storage.googleapis.com/'
 GOOGLE_CLOUD_STORAGE_DEFAULT_CACHE_CONTROL = 'public, max-age: 7200'
 
 DEFAULT_FILE_STORAGE = 'google.storage.google_cloud.GoogleCloudStorage'
+
+# Force using memory for temporary files
+
+FILE_UPLOAD_HANDLERS = ('django.core.files.uploadhandler.MemoryFileUploadHandler', )
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5000000
