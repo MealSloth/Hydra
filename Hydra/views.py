@@ -123,6 +123,12 @@ def blob_upload(request):
                 response = Result.get_result_dump(Result.DATABASE_ENTRY_NOT_FOUND)
                 return HttpResponse(response, content_type='application/json')
 
+        filetype = imghdr.what(image_file)
+
+        if filetype not in ('jpeg', 'png', 'gif'):
+            response = Result.get_result_dump(Result.INVALID_FILETYPE)
+            return HttpResponse(response, content_type='application/json')
+
         blob = Blob(
             album_id=album.id,
             content_type='image/' + imghdr.what(image_file),
