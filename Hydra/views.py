@@ -51,7 +51,7 @@ def album_delete(request):
             response = Result.get_result_dump(Result.INVALID_PARAMETER)
             return HttpResponse(response, content_type='application/json')
 
-        album = Album.objects.filter(id=body.get('album_id'))
+        album = Album.objects.filter(pk=body.get('album_id'))
 
         if album.count() > 0:
             album = album[0]
