@@ -1,0 +1,6 @@
+[submodule "Hydra"]
+	path = Hydra
+	url = https://MealSloth@mealsloth.git.cloudforge.com/applicationhydra.git
+[submodule "Chimera"]
+	path = Chimera
+	url = https://MealSloth@mealsloth.git.cloudforge.com/applicationchimera.git
